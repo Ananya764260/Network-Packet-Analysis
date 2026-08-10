@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Network Analysis Dashboard</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            background:#0F172A;
+            color:white;
+            text-align:center;
+        }
+
+        h1{
+            color:#38BDF8;
+            margin-top:40px;
+        }
+
+        .dashboard{
+            display:flex;
+            justify-content:center;
+            gap:20px;
+            margin-top:40px;
+        }
+
+        .card{
+            background:#1E293B;
+            padding:25px;
+            width:200px;
+            border-radius:10px;
+        }
+
+        .card h2{
+            color:#38BDF8;
+        }
+
+        .chart-container{
+             width:600px;
+             height:350px;
+             margin:30px auto;
+}
+.summary{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin:30px auto;
+}
+
+.summary-card{
+    background:#1E293B;
+    width:220px;
+    padding:20px;
+    border-radius:10px;
+}
+
+.summary-card h3{
+    color:#38BDF8;
+}
+
+.summary-card p{
+    font-size:25px;
+    font-weight:bold;
+}
+    </style>
+    
+
+</head>
+
+<body>
+
+    <h1>Network Packet Analysis Dashboard</h1>
+    <div class="summary">
+
+    <div class="summary-card">
+        <h3>Success Rate</h3>
+        <p id="dashboardSuccess">0%</p>
+    </div>
+
+    <div class="summary-card">
+        <h3>Failure Rate</h3>
+        <p id="dashboardFailure">0%</p>
+    </div>
+
+    <div class="summary-card">
+        <h3>Poisson Probability</h3>
+        <p id="dashboardProbability">0</p>
+    </div>
+
+</div>
+
+    <div class="dashboard">
+
+        <div class="card">
+            <h2>Packets Sent</h2>
+            <p id="sent">0</p>
+        </div>
+
+        <div class="card">
+            <h2>Packets Received</h2>
+            <p id="received">0</p>
+        </div>
+
+        <div class="card">
+            <h2>Packet Loss</h2>
+            <p id="loss">0</p>
+        </div>
+
+    </div>
+
+    <script>
+
+let sent = localStorage.getItem("sent") || 0;
+let received = localStorage.getItem("received") || 0;
+let loss = localStorage.getItem("loss") || 0;
+
+let success = localStorage.getItem("success") || 0;
+let failure = localStorage.getItem("failure") || 0;
+let probability = localStorage.getItem("probability") || 0;
+
+document.getElementById("sent").innerHTML = sent;
+document.getElementById("received").innerHTML = received;
+document.getElementById("loss").innerHTML = loss;
+
+document.getElementById("dashboardSuccess").innerHTML =
+    Number(success).toFixed(2) + "%";
+
+document.getElementById("dashboardFailure").innerHTML =
+    Number(failure).toFixed(2) + "%";
+
+document.getElementById("dashboardProbability").innerHTML =
+    Number(probability).toFixed(4);
+
+</script>
+<h2>Packet Analysis</h2>
+<h2>Success and Failure Analysis</h2>
+
+<div class="chart-container">
+    <canvas id="successChart"></canvas>
+</div>
+
+<div class="chart-container">
+    <canvas id="packetChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+let sentValue = localStorage.getItem("sent") || 0;
+let receivedValue = localStorage.getItem("received") || 0;
+let lossValue = localStorage.getItem("loss") || 0;
+
+new Chart(document.getElementById("packetChart"), {
+
+    type: "bar",
+
+    data: {
+        labels: ["Packets Sent", "Packets Received", "Packet Loss"],
+
+        datasets: [{
+            label: "Packet Statistics",
+
+            data: [
+                sentValue,
+                receivedValue,
+                lossValue
+            ]
+        }]
+    },
+
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+
+});
+
+let successValue = Number(receivedValue);
+let failureValue = Number(lossValue);
+
+new Chart(document.getElementById("successChart"), {
+
+    type: "pie",
+
+    data: {
+        labels: ["Successful Packets", "Failed Packets"],
+
+        datasets: [{
+            label: "Packet Status",
+            data: [successValue, failureValue]
+        }]
+    }
+
+});
+
+</script>
+</body>
+
+</html>
